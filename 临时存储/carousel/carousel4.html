@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript Carousel</title>
+    <style>
+        /* 轮播图容器样式 */
+        .carousel {
+            margin: 0 auto;
+            width: 600px;
+            height: 300px;
+            overflow: hidden;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        /* 轮播图片样式 */
+        .carousel img {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            /* display: none; */
+            opacity: 0.5;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        /* 显示当前图片 */
+        .carousel img.active {
+            display: block;
+            opacity: 1;
+            z-index: 2;
+        }
+
+        /* 按钮样式 */
+        .prev,
+        .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 20px; 
+            font-weight: 900;
+            z-index: 10;
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="carousel">
+        <img src="./img/01.jpeg" class="active" alt="Image 1">
+        <img src="./img/02.jpeg" alt="Image 2">
+        <img src="./img/03.jpeg" alt="Image 3">
+        <img src="./img/04.jpeg" alt="Image 4">
+        <button class="prev">&lt;</button>
+        <button class="next">&gt;</button>
+    </div>
+    <script>
+        // 获取轮播图容器、图片元素、前后按钮
+        const carousel = document.querySelector('.carousel');
+        const images = carousel.querySelectorAll('img');
+        const prevButton = carousel.querySelector('.prev');
+        const nextButton = carousel.querySelector('.next');
+        let currentIndex = 0;
+
+        function showNextImage() {
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % images.length;
+            images[currentIndex].classList.add('active');
+        }
+
+        function showPreviousImage() {
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            images[currentIndex].classList.add('active');
+        }
+
+        prevButton.addEventListener('click', showPreviousImage);
+        nextButton.addEventListener('click', showNextImage);
+
+        // 自动轮播，每3秒切换一次
+        let timerCarouselInt =setInterval(showNextImage, 2000);
+        carousel.onmouseover = function () {
+            clearInterval(timerCarouselInt);
+        };
+        carousel.onmouseout = function () {
+            timerCarouselInt = setInterval(showNextImage, 2000);
+        };
+    </script>
+</body>
+
+</html>
