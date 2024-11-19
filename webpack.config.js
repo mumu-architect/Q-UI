@@ -12,7 +12,14 @@ function getEntry() {
   glob.sync('./src/view/**/index.js').forEach((file) => {
     //console.log("开始："+file);
     //console.log(file.match(/\/view\/(.+)\/index.js/));
-    const name = file.match(/[\/|\\]view[\/|\\](.+)[\/|\\]index.js/)[1];
+    let fileName = file.match(/[\/|\\]view[\/|\\]([a-zA-Z0-9]+)[\/|\\]index.js/);
+    let name;
+    if(fileName){
+      name=fileName[1];
+    }else if(fileName=file.match(/[\/|\\]view[\/|\\]([a-zA-Z0-9]+)[\/|\\]([a-zA-Z0-9]+)[\/|\\]index.js/)){
+      name=fileName[1]+'_'+fileName[2];
+    }
+    //console.log("fileName:"+fileName);
     entry[name] = './'+convertPath(file);
     //console.log("结束："+'./'+convertPath(file));
   });
@@ -29,7 +36,15 @@ function getHtmlTemplate() {
   return glob
     .sync('./src/view/**/index.html')
     .map((file) => {
-      return { name: file.match(/[\/|\\]view[\/|\\](.+)[\/|\\]index.html/)[1], path: file };
+      let fileName = file.match(/[\/|\\]view[\/|\\]([a-zA-Z0-9]+)[\/|\\]index.html/);
+      let name;
+      if(fileName){
+        name=fileName[1];
+      }else if(fileName=file.match(/[\/|\\]view[\/|\\]([a-zA-Z0-9]+)[\/|\\]([a-zA-Z0-9]+)[\/|\\]index.html/)){
+        name=fileName[1]+'_'+fileName[2];
+      }
+      // file.match(/[\/|\\]view[\/|\\](.+)[\/|\\]index.html/)[1]
+      return { name:name, path: file };
     })
     .map(
       (template) =>
@@ -49,8 +64,8 @@ module.exports = function (env = {}) {
     cache: false,
     //entry: dev ? "./src/index.js" : "./src/index.js",
     // entry: {
-    //   about2: './src/view/about2/index.js',
-    //   about1: './src/view/about1/index.js',
+    //   about2: './src/view/about/about2/index.js',
+    //   about1: './src/view/about/about1/index.js',
     // },
     entry:{index:"./src/index.js",...getEntry()},
     output: {

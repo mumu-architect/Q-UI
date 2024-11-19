@@ -45,13 +45,22 @@ let vm = new Qvm({
       name: "mumu",
       age: 18,
     },
+    leftScrollDistance:0,
+    rightScrollDistance:0,
     message: "<h1>欢迎使用Qvm ^_^ !</h1>",
   },
   mounted() {
     this.clickTwoNav();
+    // this.clickScrollbarRight();
+    // this.clickScrollbarLeft();
+
   },
   computed: {
     getNewName() {
+      const leftButton=document.getElementsByClassName("q-scrollbar-click-left")[0];
+      leftButton.addEventListener("click", this.clickScrollbarRight(this.leftScrollDistance));
+      const rightButton=document.getElementsByClassName("q-scrollbar-click-right")[0];
+      rightButton.addEventListener("click", this.clickScrollbarRight(this.rightScrollDistance));
       return this.school.name + "架构";
     },
   },
@@ -80,6 +89,39 @@ let vm = new Qvm({
           }
         });
       });
+    },
+    clickScrollbarLeft(leftScroll){
+      //let leftButton = document.getElementsByClassName("q-scrollbar-click-left")[0];
+      let viewLayout = document.getElementsByClassName("q-scrollbar-middle")[0];
+      let leftScrollDistance=leftScroll;
+      const scrollStep=25;
+
+        if(leftScrollDistance>=viewLayout.scrollWidth-viewLayout.offsetWidth){
+          // leftButton.style.display='none';
+  
+        }else{
+          // leftButton.style.display=true;
+          leftScrollDistance+=scrollStep;
+          viewLayout.style.transform = `translateX(-${leftScrollDistance}px)`; 
+   
+
+        }
+
+      
+    },
+    clickScrollbarRight(rightScroll){
+      //let rightButton = document.getElementsByClassName("q-scrollbar-click-right")[0];
+      let viewLayout = document.getElementsByClassName("q-scrollbar-middle")[0];
+      let rightScrollDistance=rightScroll;
+      const scrollStep=25;
+        if(rightScrollDistance>=viewLayout.scrollWidth-viewLayout.offsetWidth){
+          // rightButton.style.display='none';
+        }else{
+          // rightButton.style.display=true;
+          rightScrollDistance+=scrollStep;
+          viewLayout.style.transform = `translateX(${rightScrollDistance}px)`; 
+        
+        }
     },
     showNav(id, title) {
       if (!id || !title) {
@@ -178,33 +220,31 @@ let vm = new Qvm({
         }
       });
 
-      // html = document.createElement("div");
-      // html.id = newId;
-      // html.className = 'q-iframe-dev active';
-      // // 创建一个iframe元素
-      // let iframe = document.createElement('iframe');
-      // // 设置iframe的属性
-      // iframe.src = href;
-      // iframe.width = '100%';
-      // iframe.height = '100%';
-      // iframe.frameborder = 'no';
-      // iframe.marginwidth = '0';
-      // iframe.marginheight = '0';
-      // iframe.className = 'q-iframe-dev q-iframe';
-      // // 添加iframe到div
-      // html.appendChild(iframe);
-      html += '<div id="' + newId + '" class="q-iframe-dev active">';
-      html +=
-        '<iframe class="q-iframe"   width="100%" height="100%" frameborder="no"  marginwidth="0" marginheight="0" src="' +
-        href +
-        '"></iframe>';
-      html += " </div>";
+      html = document.createElement("div");
+      html.id = newId;
+      html.className = 'q-iframe-dev active';
+      // 创建一个iframe元素
+      let iframe = document.createElement('iframe');
+      // 设置iframe的属性
+      iframe.src = href;
+      iframe.width = '100%';
+      iframe.height = '100%';
+      iframe.frameBorder = 'no';
+      iframe.marginWidth = '0';
+      iframe.marginHeight = '0';
+      iframe.className = 'q-iframe';
+      // 添加iframe到div
+      html.appendChild(iframe);
+      // html += '<div id="' + newId + '" class="q-iframe-dev active">';
+      // html +=
+      //   '<iframe class="q-iframe"   width="100%" height="100%" frameborder="no"  marginwidth="0" marginheight="0" src="' +
+      //   href +
+      //   '"></iframe>';
+      // html += " </div>";
       let appContainers = document.querySelectorAll(".app-container");
       if (appContainers.length > 0) {
-        //appContainers[0].innerHTML = html;
-        appContainers[0].insertAdjacentHTML("beforeend", html);
-        //appContainers[0].insertAdjacentElement('beforeend', html);
-        //appContainers[0].appendChild(html);
+        //appContainers[0].insertAdjacentHTML("beforeend", html);
+        appContainers[0].appendChild(html);
         //展示导航
         this.showNav(newId, title);
       }
