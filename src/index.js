@@ -51,16 +51,13 @@ let vm = new Qvm({
   },
   mounted() {
     this.clickTwoNav();
-    // this.clickScrollbarRight();
-    // this.clickScrollbarLeft();
+    this.clickScrollbarRight();
+    this.clickScrollbarLeft();
 
   },
   computed: {
     getNewName() {
-      const leftButton=document.getElementsByClassName("q-scrollbar-click-left")[0];
-      leftButton.addEventListener("click", this.clickScrollbarRight(this.leftScrollDistance));
-      const rightButton=document.getElementsByClassName("q-scrollbar-click-right")[0];
-      rightButton.addEventListener("click", this.clickScrollbarRight(this.rightScrollDistance));
+   
       return this.school.name + "架构";
     },
   },
@@ -90,12 +87,13 @@ let vm = new Qvm({
         });
       });
     },
-    clickScrollbarLeft(leftScroll){
+    clickScrollbarLeft(leftcroll){
       //let leftButton = document.getElementsByClassName("q-scrollbar-click-left")[0];
-      let viewLayout = document.getElementsByClassName("q-scrollbar-middle")[0];
-      let leftScrollDistance=leftScroll;
+      const viewLayout = document.getElementsByClassName("q-scrollbar-middle")[0];
+      let leftScrollDistance=this.leftScrollDistance;
       const scrollStep=25;
-
+      const leftButton=document.getElementsByClassName("q-scrollbar-click-left")[0];
+      leftButton.addEventListener("click", function(){
         if(leftScrollDistance>=viewLayout.scrollWidth-viewLayout.offsetWidth){
           // leftButton.style.display='none';
   
@@ -103,17 +101,21 @@ let vm = new Qvm({
           // leftButton.style.display=true;
           leftScrollDistance+=scrollStep;
           viewLayout.style.transform = `translateX(-${leftScrollDistance}px)`; 
-   
-
         }
+      });
+    
 
       
     },
     clickScrollbarRight(rightScroll){
       //let rightButton = document.getElementsByClassName("q-scrollbar-click-right")[0];
-      let viewLayout = document.getElementsByClassName("q-scrollbar-middle")[0];
-      let rightScrollDistance=rightScroll;
+      const viewLayout = document.getElementsByClassName("q-scrollbar-middle")[0];
+      let rightScrollDistance=this.rightScrollDistance;
       const scrollStep=25;
+
+      const rightButton=document.getElementsByClassName("q-scrollbar-click-right")[0];
+      rightButton.addEventListener("click", function(){
+        alert(rightScrollDistance);
         if(rightScrollDistance>=viewLayout.scrollWidth-viewLayout.offsetWidth){
           // rightButton.style.display='none';
         }else{
@@ -122,6 +124,8 @@ let vm = new Qvm({
           viewLayout.style.transform = `translateX(${rightScrollDistance}px)`; 
         
         }
+      });
+
     },
     showNav(id, title) {
       if (!id || !title) {
