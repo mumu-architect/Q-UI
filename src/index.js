@@ -45,15 +45,12 @@ let vm = new Qvm({
       name: "mumu",
       age: 18,
     },
-    leftScrollDistance:0,
-    rightScrollDistance:0,
+
     message: "<h1>欢迎使用Qvm ^_^ !</h1>",
   },
   mounted() {
     this.clickTwoNav();
-    this.clickScrollbarRight();
-    this.clickScrollbarLeft();
-
+    this.clickScrollbar();
   },
   computed: {
     getNewName() {
@@ -87,45 +84,28 @@ let vm = new Qvm({
         });
       });
     },
-    clickScrollbarLeft(leftcroll){
-      //let leftButton = document.getElementsByClassName("q-scrollbar-click-left")[0];
-      const viewLayout = document.getElementsByClassName("q-scrollbar-middle")[0];
-      let leftScrollDistance=this.leftScrollDistance;
-      const scrollStep=25;
+    //点击滚动条移动
+    clickScrollbar(){
+      const viewLayout = document.getElementsByClassName("q-scrollbar-view")[0];
+      let  scrollDistance=0;
+      const scrollStep=80;
       const leftButton=document.getElementsByClassName("q-scrollbar-click-left")[0];
       leftButton.addEventListener("click", function(){
-        if(leftScrollDistance>=viewLayout.scrollWidth-viewLayout.offsetWidth){
-          // leftButton.style.display='none';
-  
-        }else{
-          // leftButton.style.display=true;
-          leftScrollDistance+=scrollStep;
-          viewLayout.style.transform = `translateX(-${leftScrollDistance}px)`; 
+        scrollDistance-=scrollStep;
+        if(scrollDistance<=0){
+          scrollDistance=0;
         }
-      });
-    
-
+        viewLayout.scrollLeft=scrollDistance;
       
-    },
-    clickScrollbarRight(rightScroll){
-      //let rightButton = document.getElementsByClassName("q-scrollbar-click-right")[0];
-      const viewLayout = document.getElementsByClassName("q-scrollbar-middle")[0];
-      let rightScrollDistance=this.rightScrollDistance;
-      const scrollStep=25;
-
+        
+      });
       const rightButton=document.getElementsByClassName("q-scrollbar-click-right")[0];
       rightButton.addEventListener("click", function(){
-        alert(rightScrollDistance);
-        if(rightScrollDistance>=viewLayout.scrollWidth-viewLayout.offsetWidth){
-          // rightButton.style.display='none';
-        }else{
-          // rightButton.style.display=true;
-          rightScrollDistance+=scrollStep;
-          viewLayout.style.transform = `translateX(${rightScrollDistance}px)`; 
-        
+        if(!(viewLayout.scrollLeft+viewLayout.clientWidth>=viewLayout.scrollWidth)){
+          scrollDistance+=scrollStep;
+          viewLayout.scrollLeft=scrollDistance;
         }
       });
-
     },
     showNav(id, title) {
       if (!id || !title) {

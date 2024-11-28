@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queue - based Carousel</title>
+    <style>
+        .carousel-box {
+            width: 800px;
+            height: 300px;
+            margin: 0 auto;
+            overflow: hidden;
+            background-color: antiquewhite;
+        }
+
+        /* 轮播图容器样式 */
+        .carousel {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            margin: 0 auto;
+            background-color: black;
+            /* border: 1px solid #ccc; */
+        }
+
+        /* 轮播图片样式 */
+        .carousel img {
+            width: 400px;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 25%;
+            opacity: 0.9;
+            transition: transform 0.7s ease-in-out;
+            /* transition: opacity 0.5s ease-in-out; */
+            transform: translateX(0px);
+        }
+
+
+        .carousel .nav .prev,
+        .next {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 10px;
+            z-index: 99;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .carousel .nav .prev {
+            left: 100px;
+        }
+
+        .carousel .nav .next {
+            right: 100px;
+        }
+
+        /* 显示当前图片的类 */
+        .carousel img.active {
+            opacity: 1;
+            z-index: 99;
+            transform: translateX(0px);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="carousel-box">
+        <div class="carousel">
+            <!-- <img src="./img/01.jpeg" class="active" alt="Image 1"> -->
+            <img src="./img/01.jpeg" alt="Image 1">
+            <img src="./img/02.jpeg" alt="Image 2">
+            <img src="./img/03.jpeg" alt="Image 3">
+            <img src="./img/04.jpeg" alt="Image 4">
+            <img src="./img/05.jpeg" alt="Image 5">
+            <img src="./img/06.jpeg" alt="Image 6">
+            <img src="./img/07.jpeg" alt="Image 7">
+            <div class="nav">
+                <div class="prev">&lt;</div>
+                <div class="next">&gt;</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 创建一个队列类
+        class Queue {
+            constructor() {
+                this.items = [];
+                // this.items = {};
+            }
+
+            getQueueItems() {
+                return this.items;
+            }
+            setQueueItems(arr) {
+                this.items = arr;
+            }
+
+            enqueue(element) {
+                this.items.push(element);
+                // this.items = { ...this.items, ...element };
+            }
+
+            dequeue() {
+                return this.items.shift();
+                // let keys = Object.keys(this.items);
+                // if (keys.length > 0) {
+                //     let firstKey = keys[0];
+                //     let firstValue = this.items[firstKey];
+                //     delete this.items[firstKey];
+
+                //     return firstValue;
+                // }
+            }
+            peek(element) {
+                this.items.unshift(element);
+                // this.items = { ...element, ...this.items };
+            }
+            unshift(element) {
+                this.items.unshift(element);
+                // this.items = { ...element, ...this.items };
+            }
+
+            isEmpty() {
+                return this.items.length === 0;
+
+                // return Object.keys(this.items).length == 0;
+            }
+
+            size() {
+                return this.items.length;
+                // return Object.keys(this.items).length;
+            }
+        }
+
+
+
+
+
+        // 获取轮播图中的图片元素
+        const carouselImages = document.querySelectorAll('.carousel img');
+        const carousel = document.querySelector('.carousel-box');
+
+        // 创建队列并将图片元素加入队列
+        const imageQueue = new Queue();
+        carouselImages.forEach((image, index) => imageQueue.enqueue({ index: Math.abs(index + 1 - 5), el: image }));
+        const imgNum = carouselImages.length;
+        const middleImgNum = parseInt((imgNum + 1) / 2);
+
+        const prevButton = document.querySelector('.carousel .prev');
+        const nextButton = document.querySelector('.carousel .next');
+
+        function showNextImage() {
+            let xOffsetStep = 100;
+            let currentIndex = getActiveIndex();
+            let arr = imageQueue.getQueueItems();
+            arr[currentIndex].el.classList.remove('active');
+            // console.log(currentIndex);
+            currentIndex = (currentIndex + 1) % imgNum;
+            // console.log(currentIndex);
+            arr[currentIndex].el.classList.add('active');
+
+            arr.map((item, index) => {
+                if (item.sign > 0) {
+                    item.x = item.x + 1;
+                } else {
+                    item.x = item.x - 1;
+                }
+
+                if (item.x == 0) {
+                    item.x = 1;
+                    item.sign = -item.sign;
+                }
+            });
+
+            arr.map((item, index) => {
+                if (item.sign == 0) {
+                    item.sign = -1;
+                }
+                if (item.x == middleImgNum) {
+                    item.sign = 0;
+                }
+            });
+            arr.map((item, index) => {
+                let xOffset = item.sign * (item.x * xOffsetStep);
+                item.translateX = xOffset;
+                item.el.style.zIndex = item.x;
+                //缩放
+                let scale = 0.3 * item.x;
+                //旋转
+                let rotateY = item.x === middleImgNum ? 0 : 10 * item.sign;
+                item.el.style.transform = `translateX(${item.translateX}px) scale(${scale}) rotateY(${rotateY}deg)`;
+            });
+            imageQueue.setQueueItems(arr);
+
+        }
+
+        function showPreviousImage() {
+
+            let xOffsetStep = 100;
+            let currentIndex = getActiveIndex();
+            let arr = imageQueue.getQueueItems();
+            arr[currentIndex].el.classList.remove('active');
+            // console.log(currentIndex);
+            currentIndex = (currentIndex - 1 + imgNum) % imgNum;
+            // console.log(currentIndex);
+            arr[currentIndex].el.classList.add('active');
+
+            arr.map((item, index) => {
+                if (item.sign >= 0) {
+                    item.x = item.x - 1;
+                } else {
+                    item.x = item.x + 1;
+                }
+
+                if (item.x == 0) {
+                    item.x = 1;
+                    item.sign = -item.sign;
+                }
+            });
+
+            arr.map((item, index) => {
+                if (item.sign == 0) {
+                    item.sign = 1;
+                }
+                if (item.x == middleImgNum) {
+                    item.sign = 0;
+                }
+            });
+            arr.map((item, index) => {
+
+                let xOffset = item.sign * (item.x * xOffsetStep);
+                item.translateX = xOffset;
+                item.el.style.zIndex = item.x;
+                //缩放
+                let scale = 0.3 * item.x;
+                //旋转
+                let rotateY = item.x === middleImgNum ? 0 : 10 * item.sign;;
+                item.el.style.transform = `translateX(${item.translateX}px) scale(${scale}) rotateY(${rotateY}deg)`;
+            });
+            imageQueue.setQueueItems(arr);
+        }
+
+        prevButton.addEventListener('click', function (event) {
+            if (prevButton.style.pointerEvents ==='') {
+                prevButton.style.pointerEvents = 'none';
+                showPreviousImage();
+            }     
+            // 模拟一个耗时操作，可以是异步请求等
+            setInterval(() => {
+                // 启用按钮点击
+                prevButton.style.pointerEvents = '';
+            }, 600);
+
+        });
+        nextButton.addEventListener('click', function (event) {
+            if (nextButton.style.pointerEvents==='') {
+                nextButton.style.pointerEvents = 'none';
+                showNextImage();
+            }
+            // 模拟一个耗时操作，可以是异步请求等
+            setInterval(() => {
+                // 启用按钮点击
+                nextButton.style.pointerEvents = '';
+            }, 600);
+
+        });
+
+        function getActiveIndex() {
+            // 遍历img元素，找到具有active类的元素的索引
+            let activeIndex = 0;
+            for (let i = 0; i < carouselImages.length; i++) {
+                if (carouselImages[i].classList.contains('active')) {
+                    activeIndex = i;
+                    break;
+                }
+            }
+            return activeIndex;
+        }
+
+
+        //初始化轮播图
+        function initCarousel() {
+
+            //重新排序，设置z-index
+            let arr = imageQueue.getQueueItems();
+            let xOffsetStep = 100;
+            let x = 0;
+            arr.map((item, index) => {
+                item.index = Math.abs(index + 1 - (imgNum + 1));
+                item.el.style.zIndex = item.index;
+                if (item.index > middleImgNum) {
+                    x = x + 1;
+                } else if (item.index == middleImgNum) {
+                    x = middleImgNum;
+                } else {
+                    x = x - 1;
+                }
+                let sign = Math.sign(1 + index - middleImgNum);
+                item.x = x;
+                item.sign = sign;
+                let xOffset = sign * (x * xOffsetStep);
+                item.translateX = xOffset;
+                //初始化样式
+                if (item.index == middleImgNum) {
+                    x = middleImgNum;
+                    item.el.classList.add('active');
+                } else {
+                    item.el.classList.remove('active');
+                }
+                //缩放
+                let scale = 0.3 * item.x;
+                //旋转
+                let rotateY = item.x === middleImgNum ? 0 : 10 * item.sign;;
+                item.el.style.zIndex = item.x;
+                item.el.style.transform = `translateX(${item.translateX}px) scale(${scale}) rotateY(${rotateY}deg)`;
+            });
+            imageQueue.setQueueItems(arr);
+            //console.log(arr);
+        }
+
+        initCarousel();
+        // 自动轮播，每3秒切换一次
+        let timerCarouselInt = setInterval(showNextImage, 2000);
+        carousel.onmouseover = function () {
+            clearInterval(timerCarouselInt);
+        };
+        carousel.onmouseout = function () {
+            timerCarouselInt = setInterval(showNextImage, 2000);
+        };
+
+    </script>
+</body>
+
+</html>
