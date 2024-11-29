@@ -30,7 +30,8 @@
     "axios": "^1.7.7",
     "clean-webpack-plugin": "^4.0.0",
     "glob": "^11.0.0",
+    "html-loader": "^5.1.0",
     "html-webpack-plugin": "^5.6.3",
-    "q-qvm": "^1.0.1"
+    "q-qvm": "^1.0.3"
   }
 }

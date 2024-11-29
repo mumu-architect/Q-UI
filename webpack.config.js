@@ -21,7 +21,7 @@ function getEntry() {
     }
     //console.log("fileName:"+fileName);
     entry[name] = './'+convertPath(file);
-    //console.log("结束："+'./'+convertPath(file));
+    console.log("结束："+'./'+convertPath(file));
   });
   return entry;
 }
@@ -104,6 +104,13 @@ module.exports = function (env = {}) {
         {
           test: /\.css$/,
           use: ['style-loader', 'css-loader'],
+        },
+        {
+          test: /\.html$/i,
+          include:[
+            path.resolve(__dirname, "src/components")
+          ],
+          loader: "html-loader",
         },
       ],
     },

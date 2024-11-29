@@ -43,7 +43,15 @@ npm的镜像地址有以下几个：
 5. 中国科技大学镜像：https://mirrors.ustc.edu.cn/npm/
 
 6. 华为云镜像：https://mirrors.huaweicloud.com/repository/npm/
+```
+配置华为仓库：
 
+ npm config set registry https://mirrors.huaweicloud.com/repository/npm/
+
+ 配置npm仓库
+
+npm config set registry https://registry.npmjs.org/  
+```
 
 ```
 2.如何使用PostCSS？

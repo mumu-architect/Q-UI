@@ -90,16 +90,14 @@ let vm = new Qvm({
       let  scrollDistance=0;
       const scrollStep=80;
       const leftButton=document.getElementsByClassName("q-scrollbar-click-left")[0];
+      const rightButton=document.getElementsByClassName("q-scrollbar-click-right")[0];
       leftButton.addEventListener("click", function(){
         scrollDistance-=scrollStep;
         if(scrollDistance<=0){
           scrollDistance=0;
         }
         viewLayout.scrollLeft=scrollDistance;
-      
-        
       });
-      const rightButton=document.getElementsByClassName("q-scrollbar-click-right")[0];
       rightButton.addEventListener("click", function(){
         if(!(viewLayout.scrollLeft+viewLayout.clientWidth>=viewLayout.scrollWidth)){
           scrollDistance+=scrollStep;
